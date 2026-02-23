@@ -1,0 +1,16 @@
+C:/luneth_engine
+C:/winmode
+pygame
+pymunk
+gif_pygame
+numpy
+setuptools
+screeninfo
+Pyinstaller
+pygame
+pillow
+
+
+
+
+
