@@ -1,17 +1,17 @@
 import pygame
 
 
-from game.core import BaseState, logger
+from game.utils import logger
 from game.ui import Colors
 from .states import States
 
 
-class GamePlay(BaseState):
-    def __init__(self, game=None):
-        super().__init__(States.GAMEPLAY, game)
+class EmptyState:
+    def __init__(self, name=States.EMPTY_STATE):
+        self.name = name
 
     def startup(self):
-        pygame.display.set_caption("NEW GAME")
+        pass
 
     def cleanup(self):
         pass
