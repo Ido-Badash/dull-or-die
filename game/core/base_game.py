@@ -15,6 +15,9 @@ class BaseGame:
         """
         Params:
             - pwc - PygameWindowController from winmode lib.
+            - states - BaseState childrens.
+            - json_settings_path - the json path where the settings will be stored.
+            - logging_level - the luenth_engine logging level.
         """
         # params handle
         self.pygame_window_controller = pygame_window_controller
