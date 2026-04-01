@@ -29,9 +29,6 @@ class BaseGame:
         self.global_inputs = le.GlobalInputs()
         self.shared_settings = le.SharedSettings(json_path=self.json_settings_path)
         
-        # current state
-        self.current_state = states[0] if len(states) > 0 else EmptyState(self)
-        
         # flags
         self._running = True
         
@@ -42,38 +39,43 @@ class BaseGame:
         # settings
         self.shared_settings.load()
         self.fps = self.shared_settings.lget("fps", 60)
-    
-    def startup(self):
-        self.current_state.startup()
         
-    def cleanup(self):
-        self.current_state.cleanup()
-    
-    def draw(self, screen):
-        self.current_state.draw(screen)
-        
-    def get_event(self, event):
-        self.current_state.get_event(event)
-        
-    def update(self, screen, dt):
-        self.current_state.update(screen, dt)
-        
+    def _has_states(self):
+        return len(self.state_manager.states) > 0
+              
     @property
     def screen(self) -> pygame.Surface:
         return self.pygame_window_controller.get_screen()
-    
+        
+    def startup(self):
+        """Used before starting the game loop"""
+        pass
+
     def run(self):
-        self.startup()
+        # current state
+        self.current_state = self.state_manager.states[0] if self._has_states() else EmptyState()
+        self.current_state.startup()
+        
+        # game loop
         while self._running:
+            # events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.kill()
-                self.get_event(event)
-            self.draw(self.screen)
-            self.update(self.screen, self.dt)
+                self.current_state.get_event(event)
+                
+            # draw and update
+            self.current_state.draw(self.screen)
+            self.current_state.update(self.screen, self.dt)
+            
+            # update screen
             pygame.display.flip()
+            
+            # update delta time
             dt = self.clock.tick(self.fps) / 1000 # ms
-        self.cleanup()
+            
+        # cleanup last state on exit
+        self.current_state.cleanup()
         self.on_exit()
             
     def kill(self):
